@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوستات كرتون</title>
+    <title>بوستات رومانسية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #6200ee;
-            --secondary-color: #03dac6;
+            --primary-color: #e91e63;
+            --secondary-color: #ff4081;
             --background-color: #f5f5f5;
             --card-color: #ffffff;
             --text-color: #000000;
@@ -16,8 +16,8 @@
         }
 
         .dark-theme {
-            --primary-color: #6200ee;
-            --secondary-color: #03dac6;
+            --primary-color: #e91e63;
+            --secondary-color: #ff4081;
             --background-color: #121212;
             --card-color: #1e1e1e;
             --text-color: #ffffff;
@@ -151,7 +151,7 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             transition: all 0.3s;
             position: relative;
-            border: 1px solid rgba(3, 218, 198, 0.2);
+            border: 1px solid rgba(255, 64, 129, 0.2);
         }
 
         .post-card::before {
@@ -161,7 +161,7 @@
             right: -2px;
             bottom: -2px;
             left: -2px;
-            background: linear-gradient(45deg, var(--secondary-color), #03dac666, var(--secondary-color));
+            background: linear-gradient(45deg, var(--secondary-color), #ff408166, var(--secondary-color));
             z-index: -1;
             border-radius: 12px;
             opacity: 0;
@@ -174,7 +174,7 @@
 
         .post-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(3, 218, 198, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
         }
 
         .post-image {
@@ -211,7 +211,7 @@
             top: 0;
             height: 100%;
             width: 3px;
-            background: linear-gradient(to bottom, var(--secondary-color), #03dac666, var(--secondary-color));
+            background: linear-gradient(to bottom, var(--secondary-color), #ff408166, var(--secondary-color));
             border-radius: 3px;
             animation: neonLine 1.5s linear infinite;
         }
@@ -235,7 +235,7 @@
             width: 100%;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid rgba(3, 218, 198, 0.3);
+            border-top: 1px solid rgba(255, 64, 129, 0.3);
         }
 
         .options-dialog.show {
@@ -317,7 +317,7 @@
                 <i class="fas fa-arrow-left"></i> العودة
             </button>
         </div>
-        <div class="nav-title">بوستات كرتون</div>
+        <div class="nav-title">بوستات رومانسية</div>
         <div class="nav-actions">
             <button class="theme-btn" title="تبديل الثيم" id="themeToggleBtn">
                 <i class="fas fa-moon"></i>
@@ -357,8 +357,8 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // مسار البيانات لهذا القسم
-        const JSON_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/cartoon/posts.json';
+        // مسار البيانات لهذا القسم (تم التعديل ليتوافق مع الهيكل الجديد)
+        const JSON_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/romantic/posts.json';
         
         // متغيرات حالة التطبيق
         let allPosts = [];
@@ -405,12 +405,30 @@
         async function loadPosts() {
             try {
                 const response = await fetch(JSON_URL);
-                allPosts = await response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('تم تحميل البيانات:', data);
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('تنسيق JSON غير صحيح، يجب أن يكون مصفوفة');
+                }
+                
+                allPosts = data;
                 filteredPosts = [...allPosts];
                 displayPosts();
             } catch (error) {
-                console.error('Error loading posts:', error);
-                document.getElementById('postsGrid').innerHTML = '<div>حدث خطأ في جلب البوستات</div>';
+                console.error('حدث خطأ في جلب البوستات:', error);
+                document.getElementById('postsGrid').innerHTML = `
+                    <div style="padding: 20px; text-align: center;">
+                        حدث خطأ في جلب البوستات: ${error.message}
+                        <br><br>
+                        <button onclick="loadPosts()" style="padding: 8px 16px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                `;
             }
         }
         
@@ -419,7 +437,7 @@
             const grid = document.getElementById('postsGrid');
             
             if (!filteredPosts || filteredPosts.length === 0) {
-                grid.innerHTML = '<div>لا توجد بوستات في هذا القسم بعد</div>';
+                grid.innerHTML = '<div style="text-align: center; padding: 20px;">لا توجد بوستات في هذا القسم بعد</div>';
                 return;
             }
             
@@ -439,6 +457,7 @@
                             alt="صورة البوست" 
                             loading="lazy"
                             onload="this.classList.remove('loading')"
+                            onerror="this.src='https://via.placeholder.com/400x250?text=صورة+غير+متوفرة'"
                         >
                     `;
                 }
@@ -446,7 +465,7 @@
                 postCard.innerHTML = `
                     ${imageHTML}
                     <div class="post-content">
-                        <p class="post-text">${post.text}</p>
+                        <p class="post-text">${post.text || 'لا يوجد نص'}</p>
                         ${post.date ? `<div class="post-date"><i class="far fa-clock"></i> ${post.date}</div>` : ''}
                     </div>
                     <div class="options-dialog" id="optionsDialog-${index}">
@@ -520,7 +539,7 @@
         // التحقق من المفضلة
         function checkIfFavorite(post) {
             if (!post) return false;
-            const categoryFavorites = favorites['cartoon'] || [];
+            const categoryFavorites = favorites['romantic'] || [];
             return categoryFavorites.some(fav => 
                 fav.text === post.text && fav.image === (post.image || '')
             );
@@ -573,7 +592,7 @@
         // نسخ النص
         function copyText(index) {
             const post = filteredPosts[index];
-            const textToCopy = post.copy_text || post.text;
+            const textToCopy = post.copy_text || post.text || '';
             navigator.clipboard.writeText(textToCopy)
                 .then(() => showToast('تم نسخ النص بنجاح'))
                 .catch(() => showToast('فشل نسخ النص'));
@@ -582,7 +601,7 @@
         // مشاركة البوست
         function sharePost(index) {
             const post = filteredPosts[index];
-            let shareText = post.copy_text || post.text;
+            let shareText = post.copy_text || post.text || '';
             
             if (post.image && post.image.trim() !== '') {
                 shareText += `\n\n${post.image}`;
@@ -590,7 +609,7 @@
             
             if (navigator.share) {
                 navigator.share({
-                    title: 'مشاركة بوست',
+                    title: 'مشاركة بوست رومانسي',
                     text: shareText
                 }).catch(() => {
                     copyToClipboard(shareText);
@@ -616,19 +635,19 @@
             const post = filteredPosts[index];
             if (!post) return;
             
-            if (!favorites['cartoon']) {
-                favorites['cartoon'] = [];
+            if (!favorites['romantic']) {
+                favorites['romantic'] = [];
             }
             
             const isFavorite = checkIfFavorite(post);
             
             if (isFavorite) {
-                favorites['cartoon'] = favorites['cartoon'].filter(fav => 
+                favorites['romantic'] = favorites['romantic'].filter(fav => 
                     !(fav.text === post.text && fav.image === (post.image || ''))
                 );
                 showToast('تمت الإزالة من المفضلة');
             } else {
-                favorites['cartoon'].push({
+                favorites['romantic'].push({
                     text: post.text,
                     image: post.image || '',
                     date: post.date || '',
@@ -675,7 +694,7 @@
         window.toggleFavorite = toggleFavorite;
         
         // بدء التطبيق
-        initApp();
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
-    </html>
+</html>
