@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوستات كرتون</title>
+    <title>بوستات رومانسية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #6200ee;
-            --secondary-color: #03dac6;
+            --primary-color: #e91e63;
+            --secondary-color: #ff4081;
             --background-color: #f5f5f5;
             --card-color: #ffffff;
             --text-color: #000000;
@@ -16,8 +16,8 @@
         }
 
         .dark-theme {
-            --primary-color: #6200ee;
-            --secondary-color: #03dac6;
+            --primary-color: #e91e63;
+            --secondary-color: #ff4081;
             --background-color: #121212;
             --card-color: #1e1e1e;
             --text-color: #ffffff;
@@ -152,7 +152,7 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             transition: all 0.3s;
             position: relative;
-            border: 1px solid rgba(3, 218, 198, 0.2);
+            border: 1px solid rgba(255, 64, 129, 0.2);
         }
 
         .post-card::before {
@@ -162,7 +162,7 @@
             right: -2px;
             bottom: -2px;
             left: -2px;
-            background: linear-gradient(45deg, var(--secondary-color), #03dac666, var(--secondary-color));
+            background: linear-gradient(45deg, var(--secondary-color), #ff408166, var(--secondary-color));
             z-index: -1;
             border-radius: 12px;
             opacity: 0;
@@ -175,7 +175,7 @@
 
         .post-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(3, 218, 198, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
         }
 
         .post-image {
@@ -212,7 +212,7 @@
             top: 0;
             height: 100%;
             width: 3px;
-            background: linear-gradient(to bottom, var(--secondary-color), #03dac666, var(--secondary-color));
+            background: linear-gradient(to bottom, var(--secondary-color), #ff408166, var(--secondary-color));
             border-radius: 3px;
             animation: neonLine 1.5s linear infinite;
         }
@@ -236,7 +236,7 @@
             width: 100%;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid rgba(3, 218, 198, 0.3);
+            border-top: 1px solid rgba(255, 64, 129, 0.3);
         }
 
         .options-dialog.show {
@@ -314,11 +314,11 @@
 <body class="light-theme">
     <div class="navbar">
         <div class="nav-actions">
-            <button class="back-btn" onclick="window.location.href='https://mohamedvbx123.github.io/-/'">
+            <button class="back-btn" onclick="window.location.href='index.html'">
                 <i class="fas fa-arrow-left"></i> العودة
             </button>
         </div>
-        <div class="nav-title">بوستات كرتون</div>
+        <div class="nav-title">بوستات رومانسية</div>
         <div class="nav-actions">
             <button class="theme-btn" title="تبديل الثيم" id="themeToggleBtn">
                 <i class="fas fa-moon"></i>
@@ -361,355 +361,352 @@
 
     <div class="toast" id="toast"></div>
 
+
     <script>
-        // مسار البيانات لهذا القسم
-        const JSON_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/cartoon/posts.json';
-        const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/cartoon/images/';
-        
-        // متغيرات حالة التطبيق
-        let allPosts = [];
-        let filteredPosts = [];
-        let currentFilter = 'all';
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        
-        // تهيئة الثيم
-        function initTheme() {
-            const isDark = localStorage.getItem('isDarkTheme') === 'true';
-            if (isDark) {
-                document.body.className = 'dark-theme';
-                document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-sun"></i>';
-            }
+    // مسارات الملفات
+    const JSON_URL = 'posts_data/romantic/posts.json';
+    const IMAGES_BASE_PATH = 'posts_data/romantic/images/';
+    
+    // متغيرات التطبيق
+    let allPosts = [];
+    let filteredPosts = [];
+    let currentFilter = 'all';
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+    
+    // تهيئة الثيم
+    function initTheme() {
+        const isDark = localStorage.getItem('isDarkTheme') === 'true';
+        if (isDark) {
+            document.body.className = 'dark-theme';
+            document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-sun"></i>';
         }
+    }
+    
+    // تبديل الثيم
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('isDarkTheme', isDark);
         
-        // تبديل الثيم
-        function toggleTheme() {
-            const isDark = document.body.classList.toggle('dark-theme');
-            localStorage.setItem('isDarkTheme', isDark);
+        const btn = document.getElementById('themeToggleBtn');
+        if (isDark) {
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+            btn.title = 'الوضع النهاري';
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+            btn.title = 'الوضع الليلي';
+        }
+    }
+    
+    // عرض رسالة
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    }
+    
+    // جلب البوستات
+    async function loadPosts() {
+        try {
+            const response = await fetch(JSON_URL);
             
-            const btn = document.getElementById('themeToggleBtn');
-            if (isDark) {
-                btn.innerHTML = '<i class="fas fa-sun"></i>';
-                btn.title = 'الوضع النهاري';
-            } else {
-                btn.innerHTML = '<i class="fas fa-moon"></i>';
-                btn.title = 'الوضع الليلي';
+            if (!response.ok) {
+                throw new Error(`خطأ في جلب البيانات: ${response.status}`);
             }
-        }
-        
-        // عرض رسالة
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
             
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
+            const data = await response.json();
+            
+            if (!Array.isArray(data)) {
+                throw new Error('تنسيق الملف غير صحيح، يجب أن يكون مصفوفة');
+            }
+            
+            allPosts = data.map(post => ({
+                ...post,
+                // إضافة المسار الكامل للصورة
+                image: post.image ? IMAGES_BASE_PATH + post.image : ''
+            }));
+            
+            filteredPosts = [...allPosts];
+            displayPosts();
+        } catch (error) {
+            console.error('حدث خطأ:', error);
+            showError(error.message);
+        }
+    }
+    
+    // عرض الخطأ
+    function showError(message) {
+        document.getElementById('postsGrid').innerHTML = `
+            <div style="text-align: center; padding: 20px; color: var(--secondary-color)">
+                <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <div>${message}</div>
+                <button onclick="loadPosts()" style="
+                    margin-top: 15px;
+                    padding: 8px 16px;
+                    background: var(--secondary-color);
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">
+                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                </button>
+            </div>
+        `;
+    }
+    
+    // عرض البوستات
+    function displayPosts() {
+        const grid = document.getElementById('postsGrid');
+        
+        if (!filteredPosts || filteredPosts.length === 0) {
+            grid.innerHTML = '<div style="text-align: center; padding: 20px;">لا توجد بوستات متاحة</div>';
+            return;
         }
         
-        // جلب البوستات
-        async function loadPosts() {
-            try {
-                const response = await fetch(JSON_URL);
-                
-                if (!response.ok) {
-                    throw new Error(`خطأ في جلب البيانات: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (!Array.isArray(data)) {
-                    throw new Error('تنسيق الملف غير صحيح، يجب أن يكون مصفوفة');
-                }
-                
-                allPosts = data;
-                filteredPosts = [...allPosts];
-                displayPosts();
-            } catch (error) {
-                console.error('حدث خطأ:', error);
-                document.getElementById('postsGrid').innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--secondary-color)">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
-                        <div>${error.message}</div>
-                        <button onclick="loadPosts()" style="
-                            margin-top: 15px;
-                            padding: 8px 16px;
-                            background: var(--secondary-color);
-                            color: white;
-                            border: none;
-                            border-radius: 4px;
-                            cursor: pointer;
-                        ">
-                            <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                        </button>
-                    </div>
+        grid.innerHTML = '';
+        
+        filteredPosts.forEach((post, index) => {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            
+            let imageHTML = '';
+            if (post.image && post.image.trim() !== '') {
+                imageHTML = `
+                    <img 
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3E%3C/svg%3E" 
+                        data-src="${post.image}" 
+                        class="post-image loading" 
+                        alt="صورة البوست" 
+                        loading="lazy"
+                        onload="this.classList.remove('loading')"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/400x250?text=صورة+غير+متوفرة'"
+                    >
                 `;
             }
-        }
-        
-        // عرض البوستات
-        function displayPosts() {
-            const grid = document.getElementById('postsGrid');
             
-            if (!filteredPosts || filteredPosts.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; padding: 20px;">لا توجد بوستات متاحة</div>';
-                return;
-            }
+            postCard.innerHTML = `
+                ${imageHTML}
+                <div class="post-content">
+                    <p class="post-text">${post.text || 'لا يوجد نص'}</p>
+                    ${post.date ? `<div class="post-date"><i class="far fa-clock"></i> ${post.date}</div>` : ''}
+                </div>
+                <div class="options-dialog" id="optionsDialog-${index}">
+                    <button class="option-btn" onclick="copyText(${index})">
+                        <i class="fas fa-copy"></i>
+                        <span class="option-label">نسخ</span>
+                    </button>
+                    <button class="option-btn" onclick="sharePost(${index})">
+                        <i class="fas fa-share-alt"></i>
+                        <span class="option-label">مشاركة</span>
+                    </button>
+                    <button class="option-btn" onclick="toggleFavorite(${index})" id="favoriteBtn-${index}">
+                        <i class="fas fa-heart"></i>
+                        <span class="option-label">مفضلة</span>
+                    </button>
+                </div>
+            `;
             
-            grid.innerHTML = '';
+            updateFavoriteButton(index, post);
             
-            filteredPosts.forEach((post, index) => {
-                const postCard = document.createElement('div');
-                postCard.className = 'post-card';
+            postCard.addEventListener('click', (e) => {
+                if (e.target.closest('.option-btn')) return;
                 
-                let imageHTML = '';
-                if (post.image && post.image.trim() !== '') {
-                    const imageUrl = IMAGE_BASE_URL + encodeURIComponent(post.image);
-                    imageHTML = `
-                        <img 
-                            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'%3E%3Crect width='400' height='250' fill='%23f0f0f0'/%3E%3C/svg%3E" 
-                            data-src="${imageUrl}" 
-                            class="post-image loading" 
-                            alt="صورة البوست" 
-                            loading="lazy"
-                            onload="this.classList.remove('loading')"
-                            onerror="this.onerror=null;this.src='https://via.placeholder.com/400x250?text=صورة+غير+متوفرة'"
-                        >
-                    `;
-                }
+                const optionsDialog = document.getElementById(`optionsDialog-${index}`);
+                optionsDialog.classList.toggle('show');
                 
-                postCard.innerHTML = `
-                    ${imageHTML}
-                    <div class="post-content">
-                        <p class="post-text">${post.text || 'لا يوجد نص'}</p>
-                        ${post.date ? `<div class="post-date"><i class="far fa-clock"></i> ${post.date}</div>` : ''}
-                    </div>
-                    <div class="options-dialog" id="optionsDialog-${index}">
-                        <button class="option-btn" onclick="copyText(${index})">
-                            <i class="fas fa-copy"></i>
-                            <span class="option-label">نسخ</span>
-                        </button>
-                        <button class="option-btn" onclick="sharePost(${index})">
-                            <i class="fas fa-share-alt"></i>
-                            <span class="option-label">مشاركة</span>
-                        </button>
-                        <button class="option-btn" onclick="toggleFavorite(${index})" id="favoriteBtn-${index}">
-                            <i class="fas fa-heart"></i>
-                            <span class="option-label">مفضلة</span>
-                        </button>
-                    </div>
-                `;
-                
-                // تحديث حالة زر المفضلة
-                updateFavoriteButton(index, post);
-                
-                // حدث النقر على البوست
-                postCard.addEventListener('click', (e) => {
-                    if (e.target.closest('.option-btn')) return;
-                    
-                    const optionsDialog = document.getElementById(`optionsDialog-${index}`);
-                    const isShowing = optionsDialog.classList.contains('show');
-                    
-                    // إغلاق جميع الخيارات المفتوحة الأخرى
-                    document.querySelectorAll('.options-dialog.show').forEach(dialog => {
-                        if (dialog !== optionsDialog) {
-                            dialog.classList.remove('show');
+                // إغلاق الخيارات الأخرى
+                document.querySelectorAll('.options-dialog.show').forEach(dialog => {
+                    if (dialog !== optionsDialog) {
+                        dialog.classList.remove('show');
+                    }
+                });
+            });
+            
+            // تحميل متقطع للصور
+            const img = postCard.querySelector('img');
+            if (img) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src;
+                            observer.unobserve(lazyImage);
                         }
                     });
-                    
-                    optionsDialog.classList.toggle('show', !isShowing);
                 });
-                
-                // تحميل الصور عند الظهور
-                const img = postCard.querySelector('img');
-                if (img) {
-                    const observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const lazyImage = entry.target;
-                                lazyImage.src = lazyImage.dataset.src;
-                                observer.unobserve(lazyImage);
-                            }
-                        });
-                    }, {
-                        rootMargin: '200px' // سيبدأ التحميل قبل 200px من ظهور الصورة
-                    });
-                    observer.observe(img);
-                }
-                
-                grid.appendChild(postCard);
-            });
-        }
-        
-        // تحديث حالة زر المفضلة
-        function updateFavoriteButton(index, post) {
-            setTimeout(() => {
-                const favoriteBtn = document.getElementById(`favoriteBtn-${index}`);
-                if (!favoriteBtn) return;
-                
-                const isFavorite = checkIfFavorite(post);
-                favoriteBtn.innerHTML = isFavorite ? 
-                    '<i class="fas fa-heart" style="color: red"></i><span class="option-label">إزالة</span>' : 
-                    '<i class="fas fa-heart"></i><span class="option-label">مفضلة</span>';
-            }, 50);
-        }
-        
-        // التحقق من المفضلة
-        function checkIfFavorite(post) {
-            if (!post) return false;
-            const categoryFavorites = favorites['cartoon'] || [];
-            return categoryFavorites.some(fav => 
-                fav.text === post.text && fav.image === (post.image || '')
-            );
-        }
-        
-        // تطبيق الفلتر
-        function applyFilter() {
-            filteredPosts = [...allPosts];
-            
-            switch(currentFilter) {
-                case 'latest':
-                    filteredPosts.sort((a, b) => {
-                        const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
-                        const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
-                        return dateB - dateA;
-                    });
-                    break;
-                    
-                case 'oldest':
-                    filteredPosts.sort((a, b) => {
-                        const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
-                        const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
-                        return dateA - dateB;
-                    });
-                    break;
-                    
-                case 'text-only':
-                    filteredPosts = filteredPosts.filter(post => !post.image || post.image.trim() === '');
-                    break;
+                observer.observe(img);
             }
             
-            displayPosts();
-        }
-        
-        // تغيير الفلتر
-        function changeFilter(filter) {
-            currentFilter = filter;
-            
-            // تحديث حالة الفلاتر النشطة
-            document.querySelectorAll('.filter-option').forEach(option => {
-                option.classList.remove('active');
-                if (option.dataset.filter === filter) {
-                    option.classList.add('active');
-                }
-            });
-            
-            applyFilter();
-        }
-        
-        // نسخ النص
-        function copyText(index) {
-            const post = filteredPosts[index];
-            const textToCopy = post.copy_text || post.text || '';
-            
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => showToast('تم نسخ النص بنجاح'))
-                .catch(() => {
-                    // طريقة بديلة إذا فشلت
-                    const textarea = document.createElement('textarea');
-                    textarea.value = textToCopy;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    showToast('تم نسخ النص');
-                });
-        }
-        
-        // مشاركة البوست
-        function sharePost(index) {
-            const post = filteredPosts[index];
-            let shareText = post.copy_text || post.text || '';
-            
-            if (post.image && post.image.trim() !== '') {
-                shareText += `\n\n${IMAGE_BASE_URL}${encodeURIComponent(post.image)}`;
-            }
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'بوست كرتون',
-                    text: shareText
-                }).catch(() => {
-                    copyText(index);
-                });
-            } else {
-                copyText(index);
-            }
-        }
-        
-        // تبديل المفضلة
-        function toggleFavorite(index) {
-            const post = filteredPosts[index];
-            if (!post) return;
-            
-            if (!favorites['cartoon']) {
-                favorites['cartoon'] = [];
-            }
+            grid.appendChild(postCard);
+        });
+    }
+    
+    // تحديث حالة زر المفضلة
+    function updateFavoriteButton(index, post) {
+        setTimeout(() => {
+            const favoriteBtn = document.getElementById(`favoriteBtn-${index}`);
+            if (!favoriteBtn) return;
             
             const isFavorite = checkIfFavorite(post);
-            
-            if (isFavorite) {
-                favorites['cartoon'] = favorites['cartoon'].filter(fav => 
-                    !(fav.text === post.text && fav.image === (post.image || ''))
-                );
-                showToast('تمت الإزالة من المفضلة');
-            } else {
-                favorites['cartoon'].push({
-                    text: post.text,
-                    image: post.image || '',
-                    date: post.date || '',
-                    copy_text: post.copy_text || post.text
+            favoriteBtn.innerHTML = isFavorite ? 
+                '<i class="fas fa-heart" style="color: red"></i><span class="option-label">إزالة</span>' : 
+                '<i class="fas fa-heart"></i><span class="option-label">مفضلة</span>';
+        }, 50);
+    }
+    
+    // التحقق من المفضلة
+    function checkIfFavorite(post) {
+        if (!post) return false;
+        const categoryFavorites = favorites['romantic'] || [];
+        return categoryFavorites.some(fav => 
+            fav.text === post.text && fav.image === post.image
+        );
+    }
+    
+    // تطبيق الفلتر
+    function applyFilter() {
+        filteredPosts = [...allPosts];
+        
+        switch(currentFilter) {
+            case 'latest':
+                filteredPosts.sort((a, b) => {
+                    const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
+                    const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
+                    return dateB - dateA;
                 });
-                showToast('تمت الإضافة إلى المفضلة');
+                break;
+                
+            case 'oldest':
+                filteredPosts.sort((a, b) => {
+                    const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
+                    const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
+                    return dateA - dateB;
+                });
+                break;
+                
+            case 'text-only':
+                filteredPosts = filteredPosts.filter(post => !post.image || post.image.trim() === '');
+                break;
+        }
+        
+        displayPosts();
+    }
+    
+    // تغيير الفلتر
+    function changeFilter(filter) {
+        currentFilter = filter;
+        
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.filter === filter) {
+                option.classList.add('active');
             }
-            
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            updateFavoriteButton(index, post);
+        });
+        
+        applyFilter();
+    }
+    
+    // نسخ النص
+    function copyText(index) {
+        const post = filteredPosts[index];
+        const textToCopy = post.copy_text || post.text || '';
+        
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => showToast('تم نسخ النص بنجاح'))
+            .catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('تم نسخ النص');
+            });
+    }
+    
+    // مشاركة البوست
+    function sharePost(index) {
+        const post = filteredPosts[index];
+        let shareText = post.copy_text || post.text || '';
+        
+        if (post.image && post.image.trim() !== '') {
+            shareText += `\n\n${post.image}`;
         }
         
-        // تهيئة التطبيق
-        function initApp() {
-            initTheme();
-            loadPosts();
-            
-            // أحداث الواجهة
-            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
-            
-            document.getElementById('filterHeader').addEventListener('click', () => {
-                const dropdown = document.getElementById('filterDropdown');
-                dropdown.classList.toggle('show');
-                const icon = document.querySelector('#filterHeader i');
-                if (dropdown.classList.contains('show')) {
-                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-                } else {
-                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                }
+        if (navigator.share) {
+            navigator.share({
+                title: 'بوست رومانسي',
+                text: shareText
+            }).catch(() => {
+                copyText(index);
             });
-            
-            document.querySelectorAll('.filter-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    changeFilter(option.dataset.filter);
-                });
-            });
+        } else {
+            copyText(index);
+        }
+    }
+    
+    // تبديل المفضلة
+    function toggleFavorite(index) {
+        const post = filteredPosts[index];
+        if (!post) return;
+        
+        if (!favorites['romantic']) {
+            favorites['romantic'] = [];
         }
         
-        // جعل الدوال متاحة عالمياً
-        window.copyText = copyText;
-        window.sharePost = sharePost;
-        window.toggleFavorite = toggleFavorite;
+        const isFavorite = checkIfFavorite(post);
         
-        // بدء التطبيق عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+        if (isFavorite) {
+            favorites['romantic'] = favorites['romantic'].filter(fav => 
+                !(fav.text === post.text && fav.image === post.image)
+            );
+            showToast('تمت الإزالة من المفضلة');
+        } else {
+            favorites['romantic'].push({
+                text: post.text,
+                image: post.image || '',
+                date: post.date || '',
+                copy_text: post.copy_text || post.text
+            });
+            showToast('تمت الإضافة إلى المفضلة');
+        }
+        
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateFavoriteButton(index, post);
+    }
+    
+    // تهيئة التطبيق
+    function initApp() {
+        initTheme();
+        loadPosts();
+        
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+        
+        document.getElementById('filterHeader').addEventListener('click', () => {
+            const dropdown = document.getElementById('filterDropdown');
+            dropdown.classList.toggle('show');
+            const icon = document.querySelector('#filterHeader i');
+            if (dropdown.classList.contains('show')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        });
+        
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', () => {
+                changeFilter(option.dataset.filter);
+            });
+        });
+    }
+    
+    // بدء التطبيق
+    document.addEventListener('DOMContentLoaded', initApp);
+</script>
+  
 </body>
-            </html>
+</html>
