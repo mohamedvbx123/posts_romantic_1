@@ -365,7 +365,6 @@
     <script>
     // مسارات الملفات
     const JSON_URL = 'posts_data/romantic/posts.json';
-    const IMAGES_BASE_PATH = 'posts_data/romantic/images/';
     
     // متغيرات التطبيق
     let allPosts = [];
@@ -423,12 +422,7 @@
                 throw new Error('تنسيق الملف غير صحيح، يجب أن يكون مصفوفة');
             }
             
-            allPosts = data.map(post => ({
-                ...post,
-                // إضافة المسار الكامل للصورة
-                image: post.image ? IMAGES_BASE_PATH + post.image : ''
-            }));
-            
+            allPosts = data;
             filteredPosts = [...allPosts];
             displayPosts();
         } catch (error) {
@@ -709,4 +703,4 @@
 </script>
   
 </body>
-</html>
+    </html>
