@@ -1,0 +1,43 @@
+name: Update Romantic Posts
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # كل ساعة
+  workflow_dispatch:     # يسمح بالتشغيل اليدوي
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository with token
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # مهم لعمليات Git اللاحقة
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Run script
+        run: python scripts/romantic/fetch_posts.py
+      
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add posts_data/romantic/
+          git add update_tracking/romantic_last_id.txt
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update romantic posts [skip ci]"
+            git push origin HEAD:main
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
