@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوستات كرتون</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6200ee;
+            --secondary-color: #03dac6;
+            --background-color: #f5f5f5;
+            --card-color: #ffffff;
+            --text-color: #000000;
+            --navbar-height: 50px;
+        }
+
+        .dark-theme {
+            --primary-color: #6200ee;
+            --secondary-color: #03dac6;
+            --background-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            height: var(--navbar-height);
+            background-color: var(--card-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.3s;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            padding: 5px 0;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+        }
+
+        .posts-page {
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .filter-container {
+            padding: 10px 15px;
+            background-color: var(--card-color);
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            cursor: pointer;
+        }
+
+        .filter-dropdown {
+            display: none;
+            margin-top: 10px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 10px;
+        }
+
+        .filter-dropdown.show {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 8px 0;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-option:last-child {
+            border-bottom: none;
+        }
+
+        .filter-option i {
+            color: var(--secondary-color);
+            float: left;
+            margin-top: 3px;
+            display: none;
+        }
+
+        .filter-option.active i {
+            display: inline-block;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 15px;
+        }
+
+        .post-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            border: 1px solid rgba(3, 218, 198, 0.2);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            bottom: -2px;
+            left: -2px;
+            background: linear-gradient(45deg, var(--secondary-color), #03dac666, var(--secondary-color));
+            z-index: -1;
+            border-radius: 12px;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .post-card:hover::before {
+            opacity: 0.5;
+        }
+
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(3, 218, 198, 0.3);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .post-image.loading {
+            background-color: #f0f0f0;
+            opacity: 0.5;
+        }
+
+        .post-content {
+            padding: 15px;
+        }
+
+        .post-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            position: relative;
+            padding-right: 15px;
+            white-space: pre-line;
+            text-align: right;
+        }
+
+        .post-text:before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--secondary-color), #03dac666, var(--secondary-color));
+            border-radius: 3px;
+            animation: neonLine 1.5s linear infinite;
+        }
+
+        .post-date {
+            font-size: 12px;
+            color: #888;
+            text-align: left;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .options-dialog {
+            background-color: var(--card-color);
+            border-radius: 0 0 8px 8px;
+            padding: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(3, 218, 198, 0.3);
+        }
+
+        .options-dialog.show {
+            display: flex;
+        }
+
+        .option-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .option-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .option-label {
+            font-size: 10px;
+            font-weight: normal;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2.5s;
+        }
+
+        @keyframes neonLine {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @media (min-width: 768px) {
+            .posts-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .nav-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="navbar">
+        <div class="nav-actions">
+            <button class="back-btn" onclick="window.location.href='https://mohamedvbx123.github.io/-/'">
+                <i class="fas fa-arrow-left"></i> العودة
+            </button>
+        </div>
+        <div class="nav-title">بوستات كرتون</div>
+        <div class="nav-actions">
+            <button class="theme-btn" title="تبديل الثيم" id="themeToggleBtn">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="posts-page">
+        <div class="filter-container">
+            <div class="filter-header" id="filterHeader">
+                <span>تصفية البوستات</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="filter-dropdown" id="filterDropdown">
+                <div class="filter-option active" data-filter="all">
+                    <span>الكل</span>
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="filter-option" data-filter="latest">
+                    <span>الأحدث</span>
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="filter-option" data-filter="oldest">
+                    <span>الأقدم</span>
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="filter-option" data-filter="text-only">
+                    <span>نصوص فقط</span>
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="posts-grid" id="postsGrid"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // مسار البيانات لهذا القسم
+        const JSON_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/cartoon/posts.json';
+        
+        // متغيرات حالة التطبيق
+        let allPosts = [];
+        let filteredPosts = [];
+        let currentFilter = 'all';
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        
+        // تهيئة الثيم
+        function initTheme() {
+            const isDark = localStorage.getItem('isDarkTheme') === 'true';
+            if (isDark) {
+                document.body.className = 'dark-theme';
+                document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+        
+        // تبديل الثيم
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark-theme');
+            localStorage.setItem('isDarkTheme', isDark);
+            
+            const btn = document.getElementById('themeToggleBtn');
+            if (isDark) {
+                btn.innerHTML = '<i class="fas fa-sun"></i>';
+                btn.title = 'الوضع النهاري';
+            } else {
+                btn.innerHTML = '<i class="fas fa-moon"></i>';
+                btn.title = 'الوضع الليلي';
+            }
+        }
+        
+        // عرض رسالة
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+        
+        // جلب البوستات
+        async function loadPosts() {
+            try {
+                const response = await fetch(JSON_URL);
+                allPosts = await response.json();
+                filteredPosts = [...allPosts];
+                displayPosts();
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('postsGrid').innerHTML = '<div>حدث خطأ في جلب البوستات</div>';
+            }
+        }
+        
+        // عرض البوستات
+        function displayPosts() {
+            const grid = document.getElementById('postsGrid');
+            
+            if (!filteredPosts || filteredPosts.length === 0) {
+                grid.innerHTML = '<div>لا توجد بوستات في هذا القسم بعد</div>';
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            filteredPosts.forEach((post, index) => {
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                
+                let imageHTML = '';
+                if (post.image && post.image.trim() !== '') {
+                    imageHTML = `
+                        <img 
+                            src="placeholder.jpg" 
+                            data-src="${post.image}" 
+                            class="post-image loading" 
+                            alt="صورة البوست" 
+                            loading="lazy"
+                            onload="this.classList.remove('loading')"
+                        >
+                    `;
+                }
+                
+                postCard.innerHTML = `
+                    ${imageHTML}
+                    <div class="post-content">
+                        <p class="post-text">${post.text}</p>
+                        ${post.date ? `<div class="post-date"><i class="far fa-clock"></i> ${post.date}</div>` : ''}
+                    </div>
+                    <div class="options-dialog" id="optionsDialog-${index}">
+                        <button class="option-btn" onclick="copyText(${index})">
+                            <i class="fas fa-copy"></i>
+                            <span class="option-label">نسخ</span>
+                        </button>
+                        <button class="option-btn" onclick="sharePost(${index})">
+                            <i class="fas fa-share-alt"></i>
+                            <span class="option-label">مشاركة</span>
+                        </button>
+                        <button class="option-btn" onclick="toggleFavorite(${index})" id="favoriteBtn-${index}">
+                            <i class="fas fa-heart"></i>
+                            <span class="option-label">مفضلة</span>
+                        </button>
+                    </div>
+                `;
+                
+                // تحديث حالة زر المفضلة
+                updateFavoriteButton(index, post);
+                
+                // حدث النقر على البوست
+                postCard.addEventListener('click', (e) => {
+                    if (e.target.closest('.option-btn')) return;
+                    
+                    const optionsDialog = postCard.querySelector('.options-dialog');
+                    const isShowing = optionsDialog.classList.contains('show');
+                    
+                    // إغلاق أي خيارات أخرى مفتوحة
+                    document.querySelectorAll('.options-dialog.show').forEach(dialog => {
+                        if (dialog !== optionsDialog) {
+                            dialog.classList.remove('show');
+                        }
+                    });
+                    
+                    optionsDialog.classList.toggle('show', !isShowing);
+                });
+                
+                // تحميل الصور عند الظهور
+                const img = postCard.querySelector('img');
+                if (img) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const lazyImage = entry.target;
+                                lazyImage.src = lazyImage.dataset.src;
+                                observer.unobserve(lazyImage);
+                            }
+                        });
+                    });
+                    observer.observe(img);
+                }
+                
+                grid.appendChild(postCard);
+            });
+        }
+        
+        // تحديث حالة زر المفضلة
+        function updateFavoriteButton(index, post) {
+            setTimeout(() => {
+                const favoriteBtn = document.getElementById(`favoriteBtn-${index}`);
+                if (!favoriteBtn) return;
+                
+                const isFavorite = checkIfFavorite(post);
+                favoriteBtn.innerHTML = isFavorite ? 
+                    '<i class="fas fa-heart" style="color: red"></i><span class="option-label">إزالة</span>' : 
+                    '<i class="fas fa-heart"></i><span class="option-label">مفضلة</span>';
+            }, 50);
+        }
+        
+        // التحقق من المفضلة
+        function checkIfFavorite(post) {
+            if (!post) return false;
+            const categoryFavorites = favorites['cartoon'] || [];
+            return categoryFavorites.some(fav => 
+                fav.text === post.text && fav.image === (post.image || '')
+            );
+        }
+        
+        // تطبيق الفلتر
+        function applyFilter() {
+            filteredPosts = [...allPosts];
+            
+            switch(currentFilter) {
+                case 'latest':
+                    filteredPosts.sort((a, b) => {
+                        const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
+                        const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
+                        return dateB - dateA;
+                    });
+                    break;
+                    
+                case 'oldest':
+                    filteredPosts.sort((a, b) => {
+                        const dateA = a.date ? new Date(a.date.split('/').reverse().join('/')) : new Date(0);
+                        const dateB = b.date ? new Date(b.date.split('/').reverse().join('/')) : new Date(0);
+                        return dateA - dateB;
+                    });
+                    break;
+                    
+                case 'text-only':
+                    filteredPosts = filteredPosts.filter(post => !post.image || post.image.trim() === '');
+                    break;
+            }
+            
+            displayPosts();
+        }
+        
+        // تغيير الفلتر
+        function changeFilter(filter) {
+            currentFilter = filter;
+            
+            // تحديث حالة الفلاتر النشطة
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.filter === filter) {
+                    option.classList.add('active');
+                }
+            });
+            
+            applyFilter();
+        }
+        
+        // نسخ النص
+        function copyText(index) {
+            const post = filteredPosts[index];
+            const textToCopy = post.copy_text || post.text;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => showToast('تم نسخ النص بنجاح'))
+                .catch(() => showToast('فشل نسخ النص'));
+        }
+        
+        // مشاركة البوست
+        function sharePost(index) {
+            const post = filteredPosts[index];
+            let shareText = post.copy_text || post.text;
+            
+            if (post.image && post.image.trim() !== '') {
+                shareText += `\n\n${post.image}`;
+            }
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'مشاركة بوست',
+                    text: shareText
+                }).catch(() => {
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        }
+        
+        // نسخ النص إلى الحافظة
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('تم نسخ النص للمشاركة');
+        }
+        
+        // تبديل المفضلة
+        function toggleFavorite(index) {
+            const post = filteredPosts[index];
+            if (!post) return;
+            
+            if (!favorites['cartoon']) {
+                favorites['cartoon'] = [];
+            }
+            
+            const isFavorite = checkIfFavorite(post);
+            
+            if (isFavorite) {
+                favorites['cartoon'] = favorites['cartoon'].filter(fav => 
+                    !(fav.text === post.text && fav.image === (post.image || ''))
+                );
+                showToast('تمت الإزالة من المفضلة');
+            } else {
+                favorites['cartoon'].push({
+                    text: post.text,
+                    image: post.image || '',
+                    date: post.date || '',
+                    copy_text: post.copy_text || post.text
+                });
+                showToast('تمت الإضافة إلى المفضلة');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteButton(index, post);
+        }
+        
+        // تهيئة التطبيق
+        function initApp() {
+            initTheme();
+            loadPosts();
+            
+            // إعداد حدث زر الثيم
+            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+            
+            // إعداد أحداث الفلاتر
+            document.getElementById('filterHeader').addEventListener('click', () => {
+                const dropdown = document.getElementById('filterDropdown');
+                dropdown.classList.toggle('show');
+                const icon = document.querySelector('#filterHeader i');
+                if (dropdown.classList.contains('show')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            });
+            
+            // إعداد أحداث خيارات الفلتر
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    changeFilter(option.dataset.filter);
+                });
+            });
+        }
+        
+        // جعل الدوال متاحة عالمياً
+        window.copyText = copyText;
+        window.sharePost = sharePost;
+        window.toggleFavorite = toggleFavorite;
+        
+        // بدء التطبيق
+        initApp();
+    </script>
+</body>
+    </html>
