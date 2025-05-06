@@ -96,6 +96,7 @@
             background-color: var(--card-color);
             margin-bottom: 15px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         .filter-header {
@@ -313,7 +314,7 @@
 <body class="light-theme">
     <div class="navbar">
         <div class="nav-actions">
-            <button class="back-btn" onclick="window.location.href='https://mohamedvbx123.github.io/-/'">
+            <button class="back-btn" onclick="window.location.href='index.html'">
                 <i class="fas fa-arrow-left"></i> العودة
             </button>
         </div>
@@ -351,16 +352,20 @@
             </div>
         </div>
         
-        <div class="posts-grid" id="postsGrid"></div>
+        <div class="posts-grid" id="postsGrid">
+            <div style="text-align: center; padding: 20px;">
+                جاري تحميل البوستات...
+            </div>
+        </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
-        // مسار البيانات لهذا القسم (تم التعديل ليتوافق مع الهيكل الجديد)
-        const JSON_URL = 'https://raw.githubusercontent.com/mohamedvbx123/posts_vbx_1/main/posts_data/romantic/posts.json';
+        // مسار البيانات النسبي
+        const JSON_URL = 'posts_data/romantic/posts.json';
         
-        // متغيرات حالة التطبيق
+        // متغيرات التطبيق
         let allPosts = [];
         let filteredPosts = [];
         let currentFilter = 'all';
@@ -405,27 +410,36 @@
         async function loadPosts() {
             try {
                 const response = await fetch(JSON_URL);
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`خطأ في جلب البيانات: ${response.status}`);
                 }
+                
                 const data = await response.json();
-                console.log('تم تحميل البيانات:', data);
                 
                 if (!Array.isArray(data)) {
-                    throw new Error('تنسيق JSON غير صحيح، يجب أن يكون مصفوفة');
+                    throw new Error('تنسيق الملف غير صحيح، يجب أن يكون مصفوفة');
                 }
                 
                 allPosts = data;
                 filteredPosts = [...allPosts];
                 displayPosts();
             } catch (error) {
-                console.error('حدث خطأ في جلب البوستات:', error);
+                console.error('حدث خطأ:', error);
                 document.getElementById('postsGrid').innerHTML = `
-                    <div style="padding: 20px; text-align: center;">
-                        حدث خطأ في جلب البوستات: ${error.message}
-                        <br><br>
-                        <button onclick="loadPosts()" style="padding: 8px 16px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            إعادة المحاولة
+                    <div style="text-align: center; padding: 20px; color: var(--secondary-color)">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <div>${error.message}</div>
+                        <button onclick="loadPosts()" style="
+                            margin-top: 15px;
+                            padding: 8px 16px;
+                            background: var(--secondary-color);
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">
+                            <i class="fas fa-sync-alt"></i> إعادة المحاولة
                         </button>
                     </div>
                 `;
@@ -437,7 +451,7 @@
             const grid = document.getElementById('postsGrid');
             
             if (!filteredPosts || filteredPosts.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; padding: 20px;">لا توجد بوستات في هذا القسم بعد</div>';
+                grid.innerHTML = '<div style="text-align: center; padding: 20px;">لا توجد بوستات متاحة</div>';
                 return;
             }
             
@@ -452,7 +466,7 @@
                     imageHTML = `
                         <img 
                             src="placeholder.jpg" 
-                            data-src="${post.image}" 
+                            data-src="posts_data/romantic/images/${post.image}" 
                             class="post-image loading" 
                             alt="صورة البوست" 
                             loading="lazy"
@@ -491,10 +505,10 @@
                 postCard.addEventListener('click', (e) => {
                     if (e.target.closest('.option-btn')) return;
                     
-                    const optionsDialog = postCard.querySelector('.options-dialog');
+                    const optionsDialog = document.getElementById(`optionsDialog-${index}`);
                     const isShowing = optionsDialog.classList.contains('show');
                     
-                    // إغلاق أي خيارات أخرى مفتوحة
+                    // إغلاق جميع الخيارات المفتوحة الأخرى
                     document.querySelectorAll('.options-dialog.show').forEach(dialog => {
                         if (dialog !== optionsDialog) {
                             dialog.classList.remove('show');
@@ -593,9 +607,19 @@
         function copyText(index) {
             const post = filteredPosts[index];
             const textToCopy = post.copy_text || post.text || '';
+            
             navigator.clipboard.writeText(textToCopy)
                 .then(() => showToast('تم نسخ النص بنجاح'))
-                .catch(() => showToast('فشل نسخ النص'));
+                .catch(() => {
+                    // طريقة بديلة إذا فشلت
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showToast('تم نسخ النص');
+                });
         }
         
         // مشاركة البوست
@@ -609,25 +633,14 @@
             
             if (navigator.share) {
                 navigator.share({
-                    title: 'مشاركة بوست رومانسي',
+                    title: 'بوست رومانسي',
                     text: shareText
                 }).catch(() => {
-                    copyToClipboard(shareText);
+                    copyText(index);
                 });
             } else {
-                copyToClipboard(shareText);
+                copyText(index);
             }
-        }
-        
-        // نسخ النص إلى الحافظة
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            showToast('تم نسخ النص للمشاركة');
         }
         
         // تبديل المفضلة
@@ -665,10 +678,9 @@
             initTheme();
             loadPosts();
             
-            // إعداد حدث زر الثيم
+            // أحداث الواجهة
             document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
             
-            // إعداد أحداث الفلاتر
             document.getElementById('filterHeader').addEventListener('click', () => {
                 const dropdown = document.getElementById('filterDropdown');
                 dropdown.classList.toggle('show');
@@ -680,7 +692,6 @@
                 }
             });
             
-            // إعداد أحداث خيارات الفلتر
             document.querySelectorAll('.filter-option').forEach(option => {
                 option.addEventListener('click', () => {
                     changeFilter(option.dataset.filter);
@@ -688,12 +699,7 @@
             });
         }
         
-        // جعل الدوال متاحة عالمياً
-        window.copyText = copyText;
-        window.sharePost = sharePost;
-        window.toggleFavorite = toggleFavorite;
-        
-        // بدء التطبيق
+        // بدء التطبيق عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
